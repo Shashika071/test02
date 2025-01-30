@@ -13,7 +13,7 @@ const app = express();
 app.use(xssClean());
 
 // MongoDB URI directly provided here
-const MONGO_URI = 'mongodb://your-username:your-password@cluster0.mongodb.net/your-database?retryWrites=true&w=majority'; // Replace with your actual MongoDB URI
+const MONGO_URI = 'mongodb+srv://thirasaim21062:fDfu0hcev0z9KfBq@cluster0.mlkd8.mongodb.net/employeeManagement?retryWrites=true&w=majority&appName=Cluster0'; // Replace with your actual MongoDB URI
 if (!MONGO_URI) {
   console.error('❌ MongoDB URI is not set.');
   process.exit(1); // Exit the process if MONGO_URI is not provided
