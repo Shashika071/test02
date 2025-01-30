@@ -2,7 +2,6 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const multer = require('multer');
 const mongoose = require('mongoose');
-const employeeRoutes = require('./routes/employeeRoutes');
 const fs = require('fs');
 const path = require('path');
 const xssClean = require('xss-clean');
@@ -41,9 +40,8 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.error('Error connecting to MongoDB:', err));
 
-// Employee Routes
-const employeeRoutes = require('./routes/employeeRoutes');
-app.use('/api', employeeRoutes);
+// Employee Routes (only declare once)
+app.use('/api', require('./routes/employeeRoutes'));  // Removed duplicate declaration
 
 // Centralized error handling
 app.use((err, req, res, next) => {
