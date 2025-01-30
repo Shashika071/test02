@@ -13,8 +13,9 @@ const app = express();
 app.use(xssClean());
 
 // Validate required environment variables
-if (!process.env.MONGODB_URI) {
-  console.error('MONGODB_URI is not set in the environment variables.');
+const MONGO_URI = process.env.MONGODB_URI;
+if (!MONGO_URI) {
+  console.error('❌ MONGODB_URI is not set in the environment variables.');
   process.exit(1); // Exit the process if MONGODB_URI is not set
 }
 
@@ -34,19 +35,22 @@ app.use('/uploads', express.static(uploadsDir));
 // CORS middleware
 app.use(
   cors({
-    origin: 'https://employee-management-2z1.pages.dev', // Allow React frontend
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Allow headers
-    credentials: true, // Allow cookies if needed
+    origin: process.env.ALLOWED_ORIGIN || 'https://employee-management-2z1.pages.dev',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
   })
 );
 
-// MongoDB connection with error handling
+// MongoDB connection with improved error handling
 mongoose
-  .connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
+  .connect(MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('✅ Connected to MongoDB'))
   .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
+    console.error('❌ Error connecting to MongoDB:', err);
     process.exit(1); // Exit the process if MongoDB connection fails
   });
 
@@ -55,37 +59,38 @@ app.use('/api', employeeRoutes);
 
 // Health check route
 app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'Server is running successfully!' });
+  res.status(200).json({ status: '✅ Server is running successfully!' });
 });
 
 // General error handling middleware for unknown routes
 app.use((req, res, next) => {
-  res.status(404).json({ error: 'Route not found' });
+  res.status(404).json({ error: '❌ Route not found' });
 });
 
 // Centralized error handler
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: '❌ Internal server error' });
 });
 
 // Start the server
 const PORT = parseInt(process.env.PORT, 10) || 5001;
 let server = app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
 
 // Handle EADDRINUSE error (port already in use)
 server.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Trying another port...`);
+    console.error(`⚠️ Port ${PORT} is already in use. Trying another port...`);
     setTimeout(() => {
       server.close();
-      server = app.listen(PORT + 1, () => {
-        console.log(`Server running on port ${PORT + 1}`);
+      const newPort = PORT + 1;
+      server = app.listen(newPort, () => {
+        console.log(`🚀 Server running on port ${newPort}`);
       });
     }, 1000);
   } else {
-    console.error(err);
+    console.error('❌ Server error:', err);
   }
 });

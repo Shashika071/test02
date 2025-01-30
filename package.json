@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "start": "nodemon index.js",
     "deploy": "gh-pages -d build"
   },
+=======
+  "start": "nodemon server.js",
+  "deploy": "gh-pages -d build"
+}
+,
+>>>>>>> 6087e84ede0fe58539755d6a837c7ce4ce99eb40
   "keywords": [],
   "author": "",
   "license": "ISC",
