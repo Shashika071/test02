@@ -2,7 +2,7 @@ const express = require('express'); // Framework for web servers and APIs
 const cors = require('cors'); // Middleware for enabling CORS to communicate between frontend and backend
 const mongoose = require('mongoose');
 const fs = require('fs'); // Work with file systems
-require('dotenv').config(); // Load environment variables from a .env file
+// require('dotenv').config(); // Remove this line since we're no longer using .env
 const employeeRoutes = require('./routes/employeeRoutes'); // Contains URLs to API requests
 const path = require('path');
 const xssClean = require('xss-clean');
@@ -12,11 +12,11 @@ const app = express();
 // Apply XSS clean middleware
 app.use(xssClean());
 
-// Validate required environment variables
-const MONGO_URI = process.env.MONGODB_URI;
+// MongoDB URI directly provided here
+const MONGO_URI = 'mongodb://your-username:your-password@cluster0.mongodb.net/your-database?retryWrites=true&w=majority'; // Replace with your actual MongoDB URI
 if (!MONGO_URI) {
-  console.error('❌ MONGODB_URI is not set in the environment variables.');
-  process.exit(1); // Exit the process if MONGODB_URI is not set
+  console.error('❌ MongoDB URI is not set.');
+  process.exit(1); // Exit the process if MONGO_URI is not provided
 }
 
 // Middleware to parse incoming JSON requests
@@ -35,7 +35,7 @@ app.use('/uploads', express.static(uploadsDir));
 // CORS middleware
 app.use(
   cors({
-    origin: process.env.ALLOWED_ORIGIN || 'https://employee-management-2z1.pages.dev',
+    origin: 'https://employee-management-2z1.pages.dev', // Hardcode the allowed origin here
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -45,8 +45,8 @@ app.use(
 // MongoDB connection with improved error handling
 mongoose
   .connect(MONGO_URI, {
-    useNewUrlParser: true, // Deprecated, can be removed in latest versions
-    useUnifiedTopology: true, // Deprecated, can be removed in latest versions
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch((err) => {
@@ -73,8 +73,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '❌ Internal server error' });
 });
 
-// Start the server with port conflict handling
-const PORT = parseInt(process.env.PORT, 10) || 5001;
+// Start the server
+const PORT = 5001;
 let server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
