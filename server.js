@@ -45,8 +45,8 @@ app.use(
 // MongoDB connection with improved error handling
 mongoose
   .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useNewUrlParser: true, // Deprecated, can be removed in latest versions
+    useUnifiedTopology: true, // Deprecated, can be removed in latest versions
   })
   .then(() => console.log('✅ Connected to MongoDB'))
   .catch((err) => {
@@ -73,7 +73,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: '❌ Internal server error' });
 });
 
-// Start the server
+// Start the server with port conflict handling
 const PORT = parseInt(process.env.PORT, 10) || 5001;
 let server = app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
